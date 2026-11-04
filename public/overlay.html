@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Máy In Giấy — Overlay</title>
+    <link rel="stylesheet" href="css/style.css?v=30">
+    <link rel="stylesheet" href="css/tickets.css?v=28">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Clean overlay — no chrome, transparent background for OBS/LIVE Studio */
+        body {
+            background: transparent !important;
+            margin: 0; padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+
+        <!-- HUD / UI Overlay -->
+        <div class="hud" id="hud">
+            <div class="menu-board">
+                <ul>
+                    <li>
+                        <img src="assets/hoahong.png" class="menu-gift-icon" alt="Hoa hồng">
+                        <div class="tier-info">
+                            <span class="tier-name">Hoa hồng</span>
+                            <span class="tier-desc">Cảm ơn mọi người</span>
+                        </div>
+                    </li>
+                    <li>
+                        <img src="assets/bantim.png" class="menu-gift-icon" alt="Bắn tim">
+                        <div class="tier-info">
+                            <span class="tier-name">Bắn tim</span>
+                            <span class="tier-desc">Cảm ơn mọi người</span>
+                        </div>
+                    </li>
+                    <li>
+                        <img src="assets/banhvong.png" class="menu-gift-icon" alt="Bánh vòng">
+                        <div class="tier-info">
+                            <span class="tier-name">Bánh vòng</span>
+                            <span class="tier-desc">Cảm ơn mọi người</span>
+                        </div>
+                    </li>
+                    <li>
+                        <img src="assets/anhsaotoasang.png" class="menu-gift-icon" alt="Ánh sao tỏa sáng">
+                        <div class="tier-info">
+                            <span class="tier-name">Ánh sao tỏa sáng</span>
+                            <span class="tier-desc">Cảm ơn mọi người</span>
+                        </div>
+                    </li>
+                    <li>
+                        <img src="assets/bohoa.png" class="menu-gift-icon" alt="Bó hoa">
+                        <div class="tier-info">
+                            <span class="tier-name">Bó hoa</span>
+                            <span class="tier-desc">Cảm ơn mọi người</span>
+                        </div>
+                    </li>
+                    <li>
+                        <img src="assets/heomayman.png" class="menu-gift-icon" alt="Heo may mắn">
+                        <div class="tier-info">
+                            <span class="tier-name">Heo may mắn</span>
+                            <span class="tier-desc">Cảm ơn mọi người</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Marquee Floating text -->
+        <div class="marquee-container" id="marquee-container">
+            <span class="marquee-icon">👋</span>
+            <span class="marquee-text" id="marquee">Chào mừng đến với phiên Live!</span>
+        </div>
+
+        <!-- Image Background -->
+        <!-- Đã bỏ nền (trong suốt) — tự thêm nền trong TikTok LIVE Studio.
+             Muốn dùng lại: <img class="background-video" src="assets/bacgroud.jpg" alt="Background"> -->
+
+        <!-- Particle Mask (Nằm dưới máy in) -->
+        <canvas id="particle-canvas"></canvas>
+
+        <!-- Live Clock (Góc phải) -->
+        <div class="live-clock-container">
+            <div class="red-dot"></div>
+            <span id="live-clock">00:00:00</span>
+        </div>
+
+        <!-- Gift Notifications (Right side) -->
+        <div id="gift-notification-container"></div>
+
+        <!-- Printer Image Overlay -->
+        <div class="printer-overlay">
+            <div class="printer-slot">
+                <div class="slot-shadow"></div>
+                <div id="paper-roll"></div>
+            </div>
+        </div>
+
+        <!-- Paper curl tip — outside overlay so z-index works -->
+        <div class="paper-curl-tip"></div>
+    </div>
+
+    <!-- Sound -->
+    <audio id="print-sound" src="assets/printer-sound.mp3"></audio>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/printer.js?v=29"></script>
+    <script src="js/particles.js?v=2"></script>
+    <script src="js/clock.js?v=27"></script>
+    <script>
+        // ════════════════════════════════════
+        // OVERLAY — minimal socket client
+        // No connect UI needed — listens to events from server
+        // ════════════════════════════════════
+        const socket = io();
+
+        // Fit the 1080x1920 canvas into the window (scale is 1 inside a 1080x1920 OBS source)
+        function fitOverlay() {
+            const container = document.querySelector('.main-container');
+            const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+            container.style.setProperty('--fit-scale', scale);
+        }
+        window.addEventListener('resize', fitOverlay);
+        fitOverlay();
+
+        const marqueeText  = document.getElementById('marquee');
+        const countNormal  = document.getElementById('count-normal');
+        const countVip     = document.getElementById('count-vip');
+        const countSuperVipElements = document.querySelectorAll('.count-super-vip');
+        let stats = { normal: 0, vip: 0, superVip: 0 };
+
+        socket.on('connection_status', (data) => {
+            if (!data) return;
+            if (data.status === 'connected') {
+                if (data.uniqueId !== 'Test_Mode') {
+                    marqueeText.textContent = `Đã kết nối Live @${data.uniqueId}! Đang chờ sự kiện...`;
+                }
+            }
+        });
+
+        socket.on('board_state_update', (state) => {
+            const hud = document.getElementById('hud');
+            if (hud) {
+                hud.style.display = state.show ? 'block' : 'none';
+            }
+
+            const ul = document.querySelector('.menu-board ul');
+            if (ul && state.items) {
+                const lis = ul.querySelectorAll('li');
+                state.items.forEach((item, index) => {
+                    if (lis[index]) {
+                        lis[index].style.display = item.show ? 'flex' : 'none';
+                        const nameEl = lis[index].querySelector('.tier-name');
+                        if (nameEl) nameEl.textContent = item.name;
+                        const descEl = lis[index].querySelector('.tier-desc');
+                        if (descEl) descEl.textContent = item.desc;
+                    }
+                });
+            }
+        });
+
+        socket.on('print_ticket', (data) => {
+            if (data.type === 'gift') {
+                marqueeText.textContent = `🎁 WOW! ${data.username} đã tặng ${data.giftName} x${data.repeatCount}!`;
+                if (data.tier === 1) { stats.normal++; if(countNormal) countNormal.textContent = stats.normal; }
+                else if (data.tier === 2) { stats.vip++; if(countVip) countVip.textContent = stats.vip; }
+                else if (data.tier === 3) { stats.superVip++; if(countSuperVipElements) countSuperVipElements.forEach(el => el.textContent = stats.superVip); }
+            } else if (data.type === 'join') {
+                marqueeText.textContent = `👋 Chào mừng ${data.username} đến với phiên Live!`;
+            }
+
+            try { Printer.printTicket(data); } catch(e) { console.error(e); }
+        });
+
+        // Paper curl tip tracker
+        (function trackCurlTip() {
+            const paperRoll = document.getElementById('paper-roll');
+            const curlTip   = document.querySelector('.paper-curl-tip');
+            if (!paperRoll || !curlTip) return;
+
+            function updateCurl() {
+                const container = paperRoll.closest('.main-container');
+                if (!container) return;
+                const rollRect      = paperRoll.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                const scale         = containerRect.width / 1080;
+                const rollBottomScaled = rollRect.bottom - containerRect.top;
+                const rollBottomPx = rollBottomScaled / scale;
+                const clampedBottom = Math.max(0, Math.min(1920, 1920 - rollBottomPx - 36));
+                curlTip.style.bottom = clampedBottom + 'px';
+                curlTip.style.top    = 'auto';
+            }
+
+            const observer = new MutationObserver(updateCurl);
+            observer.observe(paperRoll, { childList: true, subtree: true });
+            setInterval(updateCurl, 500);
+            updateCurl();
+        })();
+
+        // ════════════════════════════════════
+        // BACKGROUND MUSIC LISTENER
+        // ════════════════════════════════════
+        socket.on('play_music', (data) => {
+            let container = document.getElementById('bgm-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'bgm-container';
+                container.style.display = 'none';
+                document.body.appendChild(container);
+            }
+            container.innerHTML = ''; // Clear current music
+
+            if (data.type === 'youtube') {
+                const iframe = document.createElement('iframe');
+                iframe.width = "1";
+                iframe.height = "1";
+                iframe.src = `https://www.youtube.com/embed/${data.videoId}?autoplay=1&loop=1&playlist=${data.videoId}&controls=0`;
+                iframe.allow = "autoplay";
+                container.appendChild(iframe);
+            } else if (data.type === 'mp3') {
+                const audio = document.createElement('audio');
+                audio.src = data.dataUrl;
+                audio.loop = true;
+                audio.autoplay = true;
+                container.appendChild(audio);
+                audio.play().catch(e => console.log('Audio play blocked:', e));
+            } else if (data.type === 'stop') {
+                // Already cleared
+            }
+        });
+    </script>
+
+</body>
+</html>

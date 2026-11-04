@@ -1,0 +1,645 @@
+/* Ticket base styles - continuous paper roll look */
+.ticket {
+    width: 380px;
+    background: #fff;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+    padding: 20px 30px;
+    position: relative;
+    border-bottom: 2px dashed #bbb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* CSS transition for extrusion effect */
+    transition: margin-top 0.5s ease-out;
+}
+
+/* 1. Join / Chat (Tier 0) - Sci-Fi Light Theme */
+.ticket-tier0 {
+    padding: 10px 15px;
+    width: 100%;
+}
+
+.t0-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 15px;
+    background: #f8fafc;
+    /* Light background */
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    position: relative;
+    border: 1px solid #e2e8f0;
+}
+
+/* Join Event: Cyber Green Radar */
+.t0-join {
+    border-left: 4px solid #16a34a;
+    background: linear-gradient(90deg, #f0fdf4 0%, #f8fafc 100%);
+}
+
+.t0-join::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e, 0 0 15px #22c55e;
+    animation: pulseBorderGreen 2s infinite;
+}
+
+@keyframes pulseBorderGreen {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
+/* Chat Event: Hologram Cyan */
+.t0-chat {
+    border-left: 4px solid #0891b2;
+    background: linear-gradient(90deg, #ecfeff 0%, #f8fafc 100%);
+}
+
+.t0-chat::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #06b6d4;
+    box-shadow: 0 0 10px #06b6d4;
+}
+
+.t0-avatar-wrap {
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: #cbd5e1;
+    padding: 3px;
+}
+
+.t0-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.t0-content {
+    text-align: left;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.t0-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e293b;
+    /* Dark text */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.t0-icon {
+    font-size: 14px;
+}
+
+.t0-join .t0-text {
+    font-size: 13px;
+    color: #15803d;
+    /* Dark green */
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.t0-chat .t0-text {
+    font-size: 14px;
+    color: #0369a1;
+    /* Dark blue/cyan */
+    font-weight: 600;
+    margin-top: 2px;
+    word-break: break-word;
+}
+
+/* ════════════════════════════════════════════════════════
+   2. Normal Gift (Tier 1) - Premium Light Theme
+   ════════════════════════════════════════════════════════ */
+.ticket-tier1 {
+    padding: 15px;
+}
+
+.t1-card {
+    position: relative;
+    width: 100%;
+    background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.15) 0%, transparent 50%),
+        linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    border-radius: 12px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid #38bdf8;
+    border-left: 6px solid #0ea5e9;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.4), inset 0 0 10px rgba(56, 189, 248, 0.2);
+    /* Allow wings to overflow */
+    overflow: visible;
+}
+
+/* Shimmer effect */
+.t1-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    animation: shimmer 3s linear infinite;
+    will-change: transform;
+    transform: skewX(-20deg);
+}
+
+@keyframes shimmer {
+    0%   { transform: translate3d(0, 0, 0) skewX(-20deg); opacity: 0; }
+    16%  { opacity: 0; }
+    22%  { opacity: 1; }
+    62%  { opacity: 1; }
+    68%  { opacity: 0; }
+    100% { transform: translate3d(600%, 0, 0) skewX(-20deg); opacity: 0; }
+}
+
+.t1-avatar-wrap {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9, #38bdf8);
+    background-size: 200%;
+    animation: borderGlow 3s linear infinite;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.7);
+    z-index: 1;
+}
+
+.t1-wings {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350%;
+    opacity: 0.9;
+    pointer-events: none;
+    filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.5));
+    animation: wingPulseT1 2s ease-in-out infinite alternate;
+    z-index: -1;
+}
+
+@keyframes wingPulseT1 {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 1;
+    }
+}
+
+.t1-sparkle {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    animation: sparkleFloat 1.5s ease-in-out infinite alternate;
+    z-index: 2;
+    filter: drop-shadow(0 0 5px #38bdf8);
+}
+
+.t1-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #cbd5e1;
+    border: 3px solid #fff;
+}
+
+@keyframes borderGlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.t1-info {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.t1-name {
+    font-size: 18px;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.t1-gift-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.t1-gift-text {
+    font-size: 15px;
+    color: #475569;
+    font-weight: 600;
+}
+
+.t1-count {
+    color: #ea580c;
+    font-weight: 900;
+    font-size: 18px;
+}
+
+/* ════════════════════════════════════════════════════════
+   3. VIP Ticket — Epic Fantasy Light (Magenta & Gold)
+   ════════════════════════════════════════════════════════ */
+.ticket-vip {
+    padding: 15px;
+}
+
+.vip-card {
+    position: relative;
+    width: 100%;
+    background: radial-gradient(circle at top left, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+        linear-gradient(to right, #faf5ff, #ffffff);
+    border-radius: 16px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 20px rgba(168, 85, 247, 0.15);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    overflow: visible;
+}
+
+.vip-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ec4899, #a855f7, #6366f1, #ec4899);
+    background-size: 200%;
+    z-index: -1;
+    border-radius: 18px;
+    animation: neonBorder 3s linear infinite;
+}
+
+@keyframes neonBorder {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+.vip-wings {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350%;
+    opacity: 0.85;
+    pointer-events: none;
+    animation: wingPulseVip 3s ease-in-out infinite alternate;
+    z-index: -1;
+}
+
+@keyframes wingPulseVip {
+    0% {
+        transform: translate(-50%, -50%) scale(0.95);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 1;
+    }
+}
+
+.vip-sparkles {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    z-index: 2;
+    animation: sparkleFloat 2s infinite alternate;
+    filter: drop-shadow(0 0 8px #a855f7);
+    white-space: nowrap;
+}
+
+.vip-avatar-wrap {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.vip-ring-1,
+.vip-ring-2 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px dashed #a855f7;
+    animation: spinRotate 8s linear infinite;
+    z-index: 2;
+}
+
+.vip-ring-2 {
+    border: 3px dotted #ec4899;
+    animation-direction: reverse;
+    animation-duration: 6s;
+    transform: scale(1.15);
+}
+
+@keyframes spinRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.vip-avatar {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+    z-index: 2;
+}
+
+.vip-info {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.vip-label {
+    display: inline-block;
+    background: linear-gradient(90deg, #a855f7, #ec4899);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 1px;
+}
+
+.vip-player-name {
+    font-size: 18px;
+    font-weight: 900;
+    color: #4c1d95;
+}
+
+.vip-thanks {
+    margin-top: 8px;
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid #a855f7;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #581c87;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.vip-gift-highlight {
+    color: #db2777;
+    font-size: 22px;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(219, 39, 119, 0.4);
+}
+
+/* ════════════════════════════════════════════════════════
+   4. Super VIP Ticket — Legendary Light (Amber & Gold)
+   ════════════════════════════════════════════════════════ */
+.ticket-super-vip {
+    padding: 20px 15px;
+}
+
+.svip-card {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+    border-radius: 20px;
+    padding: 25px 15px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid #f59e0b;
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3), inset 0 0 20px rgba(245, 158, 11, 0.2);
+    overflow: hidden;
+}
+
+/* Shimmer overlay */
+.svip-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+    animation: goldShimmer 4s linear infinite;
+    will-change: transform;
+    transform: skewX(-20deg);
+    pointer-events: none;
+}
+
+@keyframes goldShimmer {
+    0%   { transform: translate3d(0, 0, 0) skewX(-20deg); }
+    100% { transform: translate3d(600%, 0, 0) skewX(-20deg); }
+}
+
+.svip-wings {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 220%;
+    opacity: 0.95;
+    pointer-events: none;
+    animation: wingPulse 4s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes wingPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+}
+
+.svip-sparkles {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 35px;
+    z-index: 2;
+    animation: sparkleFloat 2.5s infinite alternate;
+    filter: drop-shadow(0 0 10px #f59e0b);
+    white-space: nowrap;
+}
+
+.svip-badge-wrap {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 20px 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.svip-ring-outer {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    border-radius: 50%;
+    border: 4px dashed #f59e0b;
+    animation: spinRotate 10s linear infinite reverse;
+    z-index: 1;
+}
+
+.svip-sunburst {
+    position: absolute;
+    width: 160%;
+    height: 160%;
+    background: repeating-conic-gradient(from 0deg,
+            transparent 0deg,
+            rgba(245, 158, 11, 0.2) 15deg,
+            transparent 30deg);
+    border-radius: 50%;
+    animation: spinRotate 12s linear infinite;
+}
+
+.svip-avatar-img {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #fff;
+    box-shadow: 0 0 0 5px #f59e0b, 0 0 30px rgba(245, 158, 11, 0.8);
+    z-index: 2;
+}
+
+.svip-label {
+    background: linear-gradient(90deg, #b45309, #f59e0b, #b45309);
+    background-size: 200%;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+    padding: 8px 25px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 15px rgba(217, 119, 6, 0.6);
+    z-index: 2;
+    animation: goldBgFlow 3s linear infinite;
+}
+
+@keyframes goldBgFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+.svip-player-name {
+    font-size: 32px;
+    font-weight: 900;
+    color: #78350f;
+    margin-top: 10px;
+    text-shadow: 0 2px 8px rgba(251, 191, 36, 0.8);
+    z-index: 2;
+}
+
+.svip-thanks {
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 25px;
+    border-radius: 12px;
+    color: #92400e;
+    font-size: 20px;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
+    border: 2px solid #fde68a;
+}
+
+.svip-gift-highlight {
+    color: #dc2626;
+    font-size: 28px;
+    font-weight: 900;
+    text-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+}

@@ -1,0 +1,449 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: transparent; /* For OBS */
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #111;
+    overflow: hidden; /* Prevent scrollbars when scaled */
+}
+
+.main-container {
+    width: 1080px;
+    height: 1920px;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    /* Scale down to fit the window if testing in browser, stays 1x in OBS (1080x1920).
+       --fit-scale is set from JS (CSS can't divide a length into a unitless number). */
+    transform: scale(var(--fit-scale, 1));
+    flex-shrink: 0;
+    transform-origin: center center;
+}
+
+.background-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.printer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/printer-only.png'); /* printer only, transparent background */
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 10;
+    pointer-events: none;
+    animation: floatingPrinter 6s ease-in-out infinite alternate;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+@keyframes floatingPrinter {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(0, -10px, 0); }
+}
+
+/* Connection Overlay */
+#connection-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    pointer-events: auto; /* allow clicks */
+}
+.connection-modal {
+    background: #1e1e2d;
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px solid #3a3a55;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    width: 480px;
+}
+.connection-modal h2 {
+    margin-bottom: 30px;
+    color: #00e5ff;
+    font-size: 32px;
+}
+.connection-modal input {
+    padding: 20px;
+    font-size: 24px;
+    border-radius: 10px;
+    border: 2px solid #444;
+    background: #111;
+    color: #fff;
+    width: 100%;
+    margin-bottom: 20px;
+    display: block;
+}
+.connection-modal button {
+    padding: 20px 40px;
+    font-size: 24px;
+    border-radius: 10px;
+    border: none;
+    background: #00e5ff;
+    color: #000;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 12px;
+}
+.connection-modal button:last-of-type {
+    background: #444;
+    color: #fff;
+}
+.connection-modal button:hover {
+    opacity: 0.85;
+    transform: scale(1.03);
+}
+#connection-status {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #ffaa00;
+}
+
+/* HUD Overlay */
+.hud {
+    position: absolute;
+    top: 300px; /* Nâng cao lên một chút */
+    left: 20px; /* Ép sát lề trái hơn */
+    z-index: 100;
+}
+
+.menu-board {
+    background: rgba(0, 0, 0, 0.42);
+    width: 220px; /* Thu hẹp bề ngang (từ 280px -> 220px) */
+    padding: 16px 18px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.menu-header {
+    display: none; /* Ẩn chữ BẢNG VINH DANH */
+}
+
+.menu-title {
+    font-size: 16px; /* Chữ nhỏ lại để vừa bề ngang */
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.nhan-text {
+    font-size: 12px;
+    font-weight: 900;
+    color: #ffd54f;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.menu-board ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-board li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Thu hẹp khoảng cách */
+}
+.menu-board li:last-child { margin-bottom: 0; }
+
+.menu-gift-icon {
+    width: 34px; /* Icon vừa vặn */
+    height: 34px;
+    object-fit: contain;
+    margin-right: 10px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.tier-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.tier-name {
+    font-size: 15px; /* Tên nhỏ lại */
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 2px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.tier-desc {
+    font-size: 11px;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.count {
+    display: none; /* Ẩn số đếm quà bên phải */
+}
+
+/* Marquee Floating text */
+.marquee-container {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 40px;
+    padding: 15px 40px;
+    z-index: 100;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.marquee-icon {
+    font-size: 32px;
+    margin-right: 15px;
+}
+
+.marquee-text {
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+}
+
+/* Printer Slot Area */
+.printer-slot {
+    position: absolute;
+    width: 380px;
+    left: 350px;
+    top: 36%;
+    height: 64%;
+    transform: perspective(600px) rotateX(15deg);
+    transform-origin: top center;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Dark shadow from slot opening */
+.slot-shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+    z-index: 2;
+}
+
+/* ── Paper curl tip — positioned outside printer-overlay (z-index > 10) ── */
+/* Simulates the bottom edge of the paper roll curling naturally */
+.paper-curl-tip {
+    display: none; /* disabled — using #paper-roll::after instead */
+}
+
+/* ── Paper curl at the bottom of the roll ── */
+/* ::after always sits at the bottom of paper content — no JS needed */
+#paper-roll::after {
+    content: '';
+    display: block;
+    width: 380px;
+    height: 60px;
+    flex-shrink: 0;
+    /* Paper surface: white at top → cream → darker at the curled edge */
+    background: linear-gradient(
+        180deg,
+        #ffffff  0%,
+        #f0e9e0  40%,
+        #d8cdc3  75%,
+        #bfb2a6  100%
+    );
+    /* Rounded bottom = paper curling under */
+    border-radius: 0 0 50% 50% / 0 0 100% 100%;
+    /* Cast shadow from the curl downward */
+    box-shadow:
+        0 20px 35px rgba(0, 0, 0, 0.6),
+        0  8px 14px rgba(0, 0, 0, 0.35),
+        inset 0 -6px 12px rgba(0, 0, 0, 0.12);
+    /* Slightly narrower to enhance curl illusion */
+    transform: scaleX(0.95);
+    transform-origin: center top;
+    animation: paperCurlBreath 3.5s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes paperCurlBreath {
+    0%   { transform: scaleX(0.95) translate3d(0, 0, 0); }
+    50%  { transform: scaleX(0.94) translate3d(0, 5px, 0); }
+    100% { transform: scaleX(0.95) translate3d(0, 10px, 0); }
+}
+
+#paper-roll {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100%;
+    will-change: transform;
+}
+
+/* ── Particle Mask Layer ── */
+#particle-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2; /* Nằm TRÊN background-video (1) nhưng DƯỚI printer-overlay (10) */
+    pointer-events: none;
+    transform: translateZ(0);
+}
+
+/* ── Live Clock UI ── */
+.live-clock-container {
+    position: absolute;
+    top: 150px; /* Hạ thấp đồng hồ xuống để tránh bị che */
+    right: 30px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 24px;
+    font-weight: 900;
+    color: #fff;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.live-clock-container .red-dot {
+    width: 12px;
+    height: 12px;
+    background: #ff416c;
+    border-radius: 50%;
+    animation: pulse-dot 1.5s infinite;
+}
+
+
+
+/* Gift Notifications */
+#gift-notification-container {
+    position: absolute;
+    right: 30px;
+    top: 250px; /* Thấp hơn một chút so với đồng hồ */
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.notification-ticket {
+    zoom: 0.65; /* Làm thẻ bé lại 35% */
+    opacity: 0;
+    transform: translateX(100px);
+    animation: slideInRight 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    transition: all 0.5s ease;
+}
+
+.notification-ticket.slide-down-out {
+    opacity: 0 !important;
+    transform: translateY(100px) scale(0.9) !important;
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100px);
+        margin-top: -120px; /* Tạo hiệu ứng đẩy thẻ cũ xuống mượt mà */
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+        margin-top: 0;
+    }
+}
+
+
+
+/* ── Vầng sáng phía sau máy in ──
+   Chỉ animate transform + opacity (GPU), không làm nặng máy.
+   Muốn tắt: thêm ?glow=0 sau đường dẫn overlay. */
+.main-container::before,
+.main-container::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    pointer-events: none;
+    border-radius: 50%;
+    will-change: transform, opacity;
+    z-index: 1;
+}
+.main-container::before {            /* quầng sáng hồng lớn */
+    top: 560px;
+    width: 1060px;
+    height: 1060px;
+    margin: -530px 0 0 -530px;
+    background: radial-gradient(circle,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 224, 240, 0.92) 16%,
+        rgba(255, 175, 214, 0.70) 34%,
+        rgba(255, 130, 190, 0.38) 52%,
+        rgba(255, 110, 180, 0.12) 66%,
+        rgba(255, 110, 180, 0) 76%);
+    animation: glowPulse 4.2s ease-in-out infinite alternate;
+}
+.main-container::after {             /* lõi sáng trắng ngay sau thân máy */
+    top: 520px;
+    width: 760px;
+    height: 760px;
+    margin: -380px 0 0 -380px;
+    background: radial-gradient(circle,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 250, 252, 0.55) 35%,
+        rgba(255, 240, 248, 0) 70%);
+    animation: glowCore 3s ease-in-out infinite alternate;
+}
+@keyframes glowPulse {
+    0%   { opacity: 0.80; transform: scale(0.95); }
+    100% { opacity: 1;    transform: scale(1.05); }
+}
+@keyframes glowCore {
+    0%   { opacity: 0.65; transform: scale(0.92); }
+    100% { opacity: 1;    transform: scale(1.06); }
+}
+.no-glow.main-container::before,
+.no-glow.main-container::after { display: none; }
+
+/* Vé cũ đã trôi xuống dưới: dừng hiệu ứng lặp để nhẹ máy (vé mới nhất vẫn chuyển động) */
+#paper-roll .ticket:nth-child(n+4),
+#paper-roll .ticket:nth-child(n+4) *,
+#paper-roll .ticket:nth-child(n+4) *::before,
+#paper-roll .ticket:nth-child(n+4) *::after {
+    animation-play-state: paused !important;
+}

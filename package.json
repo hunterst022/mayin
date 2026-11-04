@@ -1,0 +1,22 @@
+{
+  "name": "tiktok-printer",
+  "version": "2.1.0",
+  "description": "TikTok Live Printer - máy in giấy hiển thị quà tặng/bình luận trực tiếp (chạy được trên Render.com)",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/run-tests.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1",
+    "msedge-tts": "^2.1.0",
+    "socket.io": "^4.8.3",
+    "tiktok-live-connector": "^2.4.3",
+    "ws": "^8.21.3"
+  }
+}

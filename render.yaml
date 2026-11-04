@@ -1,0 +1,16 @@
+# Blueprint cho Render.com — tạo dịch vụ chỉ bằng "New + > Blueprint"
+services:
+  - type: web
+    name: tiktok-printer
+    runtime: node
+    plan: free              # đổi thành "starter" nếu muốn chạy 24/7, không bị ngủ
+    buildCommand: npm install --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: ADMIN_PASSWORD     # mật khẩu vào bảng điều khiển (user: admin)
+        sync: false
+      - key: SIGN_API_KEY       # tùy chọn: khóa Euler Stream, giúp kết nối ổn định hơn
+        sync: false
